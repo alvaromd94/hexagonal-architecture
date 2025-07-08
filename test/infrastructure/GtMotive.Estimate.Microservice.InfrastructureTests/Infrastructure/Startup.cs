@@ -2,12 +2,15 @@
 using Acheve.AspNetCore.TestHost.Security;
 using Acheve.TestHost;
 using GtMotive.Estimate.Microservice.Api;
+using GtMotive.Estimate.Microservice.Domain.Interfaces;
+using GtMotive.Estimate.Microservice.Domain.Interfaces.Repositories;
 using GtMotive.Estimate.Microservice.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace GtMotive.Estimate.Microservice.InfrastructureTests.Infrastructure
 {
@@ -42,6 +45,13 @@ namespace GtMotive.Estimate.Microservice.InfrastructureTests.Infrastructure
 
             services.AddControllers(ApiConfiguration.ConfigureControllers)
                 .WithApiControllers();
+
+            var mockVehicleRepo = new Mock<IVehicleRepository>();
+            services.AddSingleton(mockVehicleRepo.Object);
+
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(u => u.Save()).ReturnsAsync(1);
+            services.AddSingleton(mockUnitOfWork.Object);
 
             services.AddBaseInfrastructure(true);
         }

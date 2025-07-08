@@ -14,6 +14,6 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.UseCases
         /// </summary>
         /// <param name="input">Input Message.</param>
         /// <returns>Task.</returns>
-        Task Execute(TUseCaseInput input);
+        Task ExecuteAsync(TUseCaseInput input);
     }
 }

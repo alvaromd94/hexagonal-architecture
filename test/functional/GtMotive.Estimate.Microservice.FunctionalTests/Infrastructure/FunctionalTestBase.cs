@@ -4,7 +4,9 @@ using Xunit;
 namespace GtMotive.Estimate.Microservice.FunctionalTests.Infrastructure
 {
     [Collection(TestCollections.Functional)]
-    internal abstract class FunctionalTestBase(CompositionRootTestFixture fixture) : IAsyncLifetime
+#pragma warning disable CA1515 // Consider making public types internal
+    public abstract class FunctionalTestBase(CompositionRootTestFixture fixture) : IAsyncLifetime
+#pragma warning restore CA1515 // Consider making public types internal
     {
         public const int QueueWaitingTimeInMilliseconds = 1000;
 

@@ -1,0 +1,29 @@
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: renting-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: renting
+    volumes:
+      - mongo-data:/data/db
+
+  renting-api:
+    build:
+      context: .
+      dockerfile: src/GtMotive.Estimate.Microservice.Host/Dockerfile
+    container_name: renting-api
+    ports:
+      - "8080:80"
+    depends_on:
+      - mongodb
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      MongoDb__ConnectionString: mongodb://mongodb:27017
+      MongoDb__MongoDbDatabaseName: renting
+    volumes:
+      - ./src:/src
+
+volumes:
+  mongo-data:

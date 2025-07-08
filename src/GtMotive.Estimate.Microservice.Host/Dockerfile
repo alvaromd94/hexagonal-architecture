@@ -5,7 +5,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0.100-noble-amd64 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0.102-noble-amd64 AS build
 ARG PersonalAccessToken
 WORKDIR /src
 COPY Directory.Build.* ./
@@ -33,4 +33,5 @@ RUN dotnet publish "GtMotive.Estimate.Microservice.Host.csproj" -c Release -o /a
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV ASPNETCORE_URLS=http://+:80
 ENTRYPOINT ["dotnet", "GtMotive.Estimate.Microservice.Host.dll"]

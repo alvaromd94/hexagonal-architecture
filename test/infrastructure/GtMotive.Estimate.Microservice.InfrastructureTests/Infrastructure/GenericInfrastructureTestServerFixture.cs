@@ -8,7 +8,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace GtMotive.Estimate.Microservice.InfrastructureTests.Infrastructure
 {
-    internal sealed class GenericInfrastructureTestServerFixture : IDisposable
+#pragma warning disable CA1515 // Consider making public types internal
+    public sealed class GenericInfrastructureTestServerFixture : IDisposable
+#pragma warning restore CA1515 // Consider making public types internal
     {
         public GenericInfrastructureTestServerFixture()
         {

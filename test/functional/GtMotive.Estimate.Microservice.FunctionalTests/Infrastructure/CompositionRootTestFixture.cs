@@ -2,17 +2,22 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.Api;
+using GtMotive.Estimate.Microservice.Domain.Interfaces;
+using GtMotive.Estimate.Microservice.Domain.Interfaces.Repositories;
 using GtMotive.Estimate.Microservice.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Xunit;
 
 [assembly: CLSCompliant(false)]
 
 namespace GtMotive.Estimate.Microservice.FunctionalTests.Infrastructure
 {
-    internal sealed class CompositionRootTestFixture : IDisposable, IAsyncLifetime
+#pragma warning disable CA1515 // Consider making public types internal
+    public sealed class CompositionRootTestFixture : IDisposable, IAsyncLifetime
+#pragma warning restore CA1515 // Consider making public types internal
     {
         private readonly ServiceProvider _serviceProvider;
 
@@ -94,6 +99,12 @@ namespace GtMotive.Estimate.Microservice.FunctionalTests.Infrastructure
             services.AddApiDependencies();
             services.AddLogging();
             services.AddBaseInfrastructure(true);
+
+            services.AddSingleton<IVehicleRepository, InMemoryVehicleRepository>();
+
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(u => u.Save()).ReturnsAsync(1);
+            services.AddSingleton(mockUnitOfWork.Object);
         }
     }
 }

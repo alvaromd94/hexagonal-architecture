@@ -5,10 +5,16 @@ using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using GtMotive.Estimate.Microservice.Api;
+using GtMotive.Estimate.Microservice.Api.DependencyInjection;
+using GtMotive.Estimate.Microservice.Domain.Interfaces;
+using GtMotive.Estimate.Microservice.Domain.Interfaces.Repositories;
 using GtMotive.Estimate.Microservice.Host.Configuration;
 using GtMotive.Estimate.Microservice.Host.DependencyInjection;
 using GtMotive.Estimate.Microservice.Infrastructure;
+using GtMotive.Estimate.Microservice.Infrastructure.MongoDb;
+using GtMotive.Estimate.Microservice.Infrastructure.MongoDb.Repositories;
 using GtMotive.Estimate.Microservice.Infrastructure.MongoDb.Settings;
+using GtMotive.Estimate.Microservice.Infrastructure.MongoDb.UnitOfWork;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
@@ -62,10 +68,18 @@ builder.Services.Configure<AppSettings>(appSettingsSection);
 var appSettings = appSettingsSection.Get<AppSettings>();
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDb"));
 
+builder.Services.AddSingleton<MongoService>();
+
 builder.Services.AddControllers(ApiConfiguration.ConfigureControllers)
     .WithApiControllers();
 
+builder.Services.AddPresenters();
+
 builder.Services.AddBaseInfrastructure(builder.Environment.IsDevelopment());
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddSingleton<MongoService>();
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -135,6 +149,18 @@ if (app.Environment.IsDevelopment())
 
 app.UseSwaggerInApplication(pathBase, builder.Configuration);
 app.UseRouting();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/swagger");
+        return;
+    }
+
+    await next();
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
