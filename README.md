@@ -1,4 +1,27 @@
 # Sample Implementation of Hexagonal Architecture in a Microservice
+## Running the Project with Docker
+
+This project can be quickly started using Docker. It includes a backend API and a MongoDB instance for persistence.
+
+### Prerequisites
+
+- [Docker](https://www.docker.com/)
+
+### How to Run
+
+From the root of the repository, run the following command:
+
+```bash
+docker-compose up --build
+```
+
+This will:
+
+- Start **MongoDB** on port `27017` (default)
+- Build and run the API (from `GtMotive.Estimate.Microservice.Host`) on port `8080`
+
+You can then access the API via: [http://localhost:8080](http://localhost:8080)
+
 ## Index
 ### [Introduction](#introduction)
 ### [Clean Architecture](#clean-architecture)
